@@ -1,0 +1,650 @@
+﻿@model QL_VANBAN.Models.LAP_LICH
+@using QL_VANBAN.Common;
+@using Model.DAO;
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .shadow-textarea textarea.form-control::placeholder {
+        font-weight: 300;
+    }
+
+    #exampleFormControlTextarea6 {
+        height: 100px;
+    }
+
+    .shadow-textarea textarea.form-control {
+        padding-left: 0.8rem;
+    }
+
+    #listNhanVien, #slNhanVien, #listDonVi, #slDonVi {
+        height: 150px;
+    }
+
+    .btn-click {
+        width: 100%;
+        font-weight: bold;
+        height: 37px;
+        border: 1px solid #DDDDDD;
+    }
+
+    .right {
+        text-align: right;
+        margin-top: 6px;
+    }
+
+    .content-right {
+        text-align: right;
+        float: right;
+        margin-right: 20px;
+    }
+
+    .input-group-text {
+        width: 130px;
+    }
+</style>
+
+
+<section class="content">
+
+    <div class="card">
+        <div class="row">
+            <div class="col-md-8">
+                <button type="button" class="btn btn-primary" style="margin: 5px 5px 5px 25px; width: 165px" data-toggle="modal" data-target="#myModalCreate">
+                    Lập lịch làm việc
+                </button>
+            </div>
+            <div class=" col-md-4 ">
+                @using (Html.BeginForm("Index", "Home", FormMethod.Get))
+                {
+                    <div class="row content-right">
+                        <div class="right">
+                            @Html.DropDownList("selectList", ViewBag.VBDonVi as SelectList, "Chọn đơn vị -- Tất cả --", new { @class = "custom-select mb-3 height", @name = "cars" })
+                        </div>
+                        <div class="right">
+                            <button type="submit" id="btnFind" class="btn btn-primary">Lọc</button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+
+        <!-- The Modal -->
+        @{
+            var sesssion = (UserLogin)Session[CommonConstants.USER_SESSION];
+            if (new NhanVienDAO().IsVanThu(sesssion.UserName))
+            {
+                <div class="modal fade" id="myModalCreate">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Tạo mới lịch làm việc</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <div class="col-md-12">
+                                    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "login100-form validate-form", @name= "frm", onSubmit = "return IsEmpty()" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <div class="form-horizontal">
+                                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                            <div class="input-group mb-3 col-md-12" data-validate="Username is required">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        Nội dung
+                                                    </span>
+                                                </div>
+                                                @Html.EditorFor(model => model.lichlamviec.NOI_DUNG, new { htmlAttributes = new { @class = "form-control", @placeholder = "Nội dung lịch làm việc", @required = true } })
+                                                @Html.ValidationMessageFor(model => model.lichlamviec.NOI_DUNG, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="input-group mb-3 col-md-12">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        Giờ bắt đầu
+                                                    </span>
+                                                </div>
+                                                @Html.EditorFor(model => model.lichlamviec.GIO_BAT_DAU, new { htmlAttributes = new { @class = "form-control", Type = "time", @required=true } })
+                                                @Html.ValidationMessageFor(model => model.lichlamviec.GIO_BAT_DAU, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="input-group mb-3 col-md-12">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        Ngày bắt đầu
+                                                    </span>
+                                                </div>
+                                                @Html.EditorFor(model => model.lichlamviec.NGAY_BAT_DAU, new { htmlAttributes = new { @class = "form-control", Type = "date", @name="startDate", @required = true } })
+                                                @Html.ValidationMessageFor(model => model.lichlamviec.NGAY_BAT_DAU, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="input-group mb-3 col-md-12">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        Giờ kết thúc
+                                                    </span>
+                                                </div>
+                                                @Html.EditorFor(model => model.lichlamviec.GIO_KET_THUC, new { htmlAttributes = new { @class = "form-control", Type = "time", @required = true } })
+                                                @Html.ValidationMessageFor(model => model.lichlamviec.GIO_KET_THUC, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="input-group mb-3 col-md-12">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        Ngày kết thúc
+                                                    </span>
+                                                </div>
+                                                @Html.EditorFor(model => model.lichlamviec.NGAY_KET_THUC, new { htmlAttributes = new { @class = "form-control", Type = "date"} })
+                                                @Html.ValidationMessageFor(model => model.lichlamviec.NGAY_KET_THUC, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="input-group mb-3 col-md-12">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        Tham dự
+                                                    </span>
+                                                </div>
+                                                @Html.TextAreaFor(model => model.lichlamviec.THANH_PHAN, new { @name = "thanhPhan", @class = "form-control z-depth-1", @id = "exampleFormControlTextarea6", @row = 5, @placeholder = "Nhập thành phần tham dự bên ngoài..." })
+                                                @Html.ValidationMessageFor(model => model.lichlamviec.THANH_PHAN, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @Html.DropDownList("listNhanVien", ViewBag.VBNhanVien as SelectList, new { @class = "custom-select", multiple = true })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="row"><input class="btn-click btn btn-light" type="button" id="right" value=">" /></div>
+                                                    <div class="row"><input class="btn-click btn btn-light" type="button" id="left" value="<" /></div>
+                                                    <div class="row"><input class="btn-click btn btn-light" type="button" id="rightall" value=">>" /></div>
+                                                    <div class="row"><input class="btn-click btn btn-light" type="button" id="leftall" value="<<" /></div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @Html.DropDownList("slNhanVien", ViewBag.AddNV as SelectList, new { @class = "custom-select", multiple = true })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @Html.DropDownList("listDonVi", ViewBag.VBDonVi as SelectList, new { @class = "custom-select", multiple = true })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="row"><input class="btn-click btn btn-light" type="button" id="dvright" value=">" /></div>
+                                                    <div class="row"><input class="btn-click btn btn-light" type="button" id="dvleft" value="<" /></div>
+                                                    <div class="row"><input class="btn-click btn btn-light" type="button" id="dvrightall" value=">>" /></div>
+                                                    <div class="row"><input class="btn-click btn btn-light" type="button" id="dvleftall" value="<<" /></div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @Html.DropDownList("slDonVi", ViewBag.AddDV as SelectList, new { @class = "form-control", multiple = true }) 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="col-md-offset-2 col-md-12">
+                                                    <input type="submit"  value="Tạo mới" class="btn btn-success col-md-12 login100-form-btn" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="modal fade" id="myModalCreate">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Tạo mới lịch làm việc</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <div class="col-md-12">
+                                    <p>Bạn không đủ quyền để thêm dữ liệu.</p>
+                                </div>
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+
+        }
+
+
+        <div class="col-md-12">
+            <div id="calender"></div>
+        </div>
+    </div>
+
+</section>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    @{
+                        if (new NhanVienDAO().IsVanThu(sesssion.UserName))
+                        {
+                            <button id="btnEdit" class="btn btn-success btn-sm pull-right col-md-5" style="margin: 0px 20px 0px 20px">
+                                <span class="glyphicon glyphicon-pencil"><a id="link" style="text-decoration: none; color: white;"></a></span>
+                            </button>
+                            <button id="btnDelete" class="btn btn-success btn-sm pull-right col-md-5" style="margin: 0px 20px 0px 20px">
+                                <span class="glyphicon glyphicon-remove">  </span>Xóa
+                            </button>
+                        }
+                    }
+                </div>
+                <br />
+                <p id="pDetails">
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalSave" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Cập nhật lịch làm việc</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12 form-horizontal">
+                    <input type="hidden" id="hdEventID" value="0" />
+                    <div class="form-group">
+                        <label>Nội dung</label>
+                        <input type="text" id="txtTitle" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Giờ bắt đầu</label>
+                        <input type="text" id="txtGioBatDau" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày bắt đầu</label>
+                        <div class="input-group date" id="dtp1">
+                            <input type="text" id="txtNgayBatDau" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Giờ kết thúc</label>
+                        <input type="text" id="txtGioKetThuc" class="form-control" />
+                    </div>
+                    <div class="form-group" id="divEndDate" @*style="display:none"*@>
+                        <label>Ngày kết thúc</label>
+                        <div class="input-group date" id="dtp2">
+                            <input type="text" id="txtNgayKetThuc" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Thành phần</label>
+                        <textarea id="txtThanhPhan" rows="3" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Thành viên</label>
+                        @Html.DropDownList("slNhanVien", ViewBag.VBNhanVien as SelectList, "--- Select ---", new { @class = "form-control", multiple = true })
+                    </div>
+
+                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.5.1/fullcalendar.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="~/Assets/datepicker/fullcalendar.min.js"></script>
+    <script src="~/Assets/datepicker/locales-all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.0.0-alpha/locale-all.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.0/locale-all.js"></script>
+    <script type="text/javascript">
+        
+        $(function () {
+            function moveItems(origin, dest) {
+                $(origin).find(':selected').appendTo(dest);
+            }
+
+            function moveAllItems(origin, dest) {
+                $(origin).children().appendTo(dest);
+            }
+
+            $('#left').click(function () {
+                moveItems('#slNhanVien', '#listNhanVien');
+            });
+
+            $('#right').on('click', function () {
+                moveItems('#listNhanVien', '#slNhanVien');
+            });
+
+            $('#leftall').on('click', function () {
+                moveAllItems('#slNhanVien', '#listNhanVien');
+            });
+
+            $('#rightall').on('click', function () {
+                moveAllItems('#listNhanVien', '#slNhanVien');
+            });
+        });
+
+        $(function () {
+            function moveItems(origin, dest) {
+                $(origin).find(':selected').appendTo(dest);
+            }
+
+            function moveAllItems(origin, dest) {
+                $(origin).children().appendTo(dest);
+            }
+
+            $('#dvleft').click(function () {
+                moveItems('#slDonVi', '#listDonVi');
+            });
+
+            $('#dvright').on('click', function () {
+                moveItems('#listDonVi', '#slDonVi');
+            });
+
+            $('#dvleftall').on('click', function () {
+                moveAllItems('#slDonVi', '#listDonVi');
+            });
+
+            $('#dvrightall').on('click', function () {
+                moveAllItems('#listDonVi', '#slDonVi');
+            });
+        });
+
+        $(document).ready(function () {
+            var events = [];
+            var selectedEvent = null;
+            FetchEventAndRenderCalendar();
+            function FetchEventAndRenderCalendar() {
+                events = [];
+                $.ajax({
+                    type: "GET",
+                    url: "/home/GetEvents",
+                    success: function (data) {
+                        $.each(data, function (i, v) {
+                            events.push({
+                                eventID: v.ID_LICH_LAM_VIEC,
+                                title: v.NOI_DUNG,
+                                startTime: moment(v.GIO_BAT_DAU),
+                                start: moment(v.NGAY_BAT_DAU),
+                                endTime: moment(v.GIO_KET_THUC),
+                                end: moment(v.NGAY_KET_THUC),
+                                thanhphan: v.THANH_PHAN == null ? "Không có" : v.THANH_PHAN,
+                                nhanvien: v.NHAN_VIEN == null ? "Không có" : v.NHAN_VIEN
+                            });
+                        })
+
+                        GenerateCalender(events);
+                    },
+                    error: function (error) {
+                        alert('failed');
+                    }
+                })
+            }
+
+            function IsEmpty() {
+                if (document.forms['frm'].thanhPhan.value == "" || document.forms['frm'].thanhPhan.value == null) {
+                    alert("Không được bỏ trống các trường đã quy định.");
+                    return false;
+                }
+                return true;
+            }
+
+            function GenerateCalender(events) {
+                $('#calender').fullCalendar('destroy');
+                $('#calender').fullCalendar({
+                    contentHeight: 600,
+                    defaultDate: new Date(),
+                    timeFormat: 'h(:mm)a',
+                    locale: 'vi-gb',
+                    header: {
+                        left: 'prev,next today myCustomButton',
+                        center: 'title',
+                        right: 'month,basicWeek,basicDay,listWeek',
+                    },
+                    eventLimit: true,
+                    eventColor: '#0099FF',
+                    events: events,
+                    eventClick: function (calEvent, jsEvent, view) {
+                        selectedEvent = calEvent;
+                        $('#myModal #eventTitle').text(calEvent.title);
+                        var $description = $('<div/>');
+
+                        $description.append($('<p/>').html('<b style="margin-right: 42px">Giờ bắt đầu: </b>' + calEvent.startTime.format("HH:mm A")));
+                        $description.append($('<p/>').html('<b style="margin-right: 30px">Ngày bắt đầu: </b>' + calEvent.start.format("DD-MM-YYYY")));
+                        $description.append($('<p/>').html('<b style="margin-right: 37px">Giờ kết thúc: </b>' + calEvent.endTime.format("HH:mm A")));
+                        if (calEvent.end != null) {
+                            $description.append($('<p/>').html('<b style="margin-right: 25px">Ngày kết thúc: </b>' + calEvent.end.format("DD-MM-YYYY")));
+                        }
+                        $description.append($('<p/>').html('<b style="margin-right: 61px">Tham dự: </b>' + calEvent.thanhphan));
+                        $description.append($('<p/>').html('<b style="margin-right: 53px">Nhân viên: </b>' + calEvent.nhanvien));
+                        var $a = $('<div/>');
+                        $a.append($('<div/>').html('<a id="btnEdit" style="text-decoration: none; color: white;" href="/Home/Edit?id=' + calEvent.eventID + '">Sửa</a>'));
+                        $('#myModal #link').empty().html($a);
+                        $('#myModal #pDetails').empty().html($description);
+                        $('#myModal').modal();
+                    }
+
+                })
+            }
+
+            $('#dtp1,#dtp2').datetimepicker({
+                format: 'DD/MM/YYYY'
+            });
+
+            $('#btnSave').click(function () {
+                //Validation/
+                if ($('#txtTitle').val().trim() == "") {
+                    alert('Nội dung không được bỏ trống!');
+                    return;
+                }
+                if ($('#txtNgayBatDau').val().trim() == "") {
+                    alert('Ngày bắt đầu không được bỏ trống!');
+                    return;
+                }
+                if ($('#txtGioBatDau').val().trim() == "") {
+                    alert('Giờ bắt đầu không được bỏ trống!');
+                    return;
+                }
+                if ($('#txtGioKetThuc').val().trim() == "") {
+                    alert('Giờ kết thúc không được bỏ trống!');
+                    return;
+                }
+                if ($('#txtNgayKetThuc').val().trim() == "") {
+                    alert('Ngày kết thúc không được bỏ trống!');
+                    return;
+                }
+                else {
+                    var startDate = moment($('#txtNgayBatDau').val(), "DD/MM/YYYY").toDate();
+                    var endDate = moment($('#txtNgayKetThuc').val(), "DD/MM/YYYY").toDate();
+                    if (startDate > endDate) {
+                        alert('Ngày bắt đầu không được lớn hơn ngày kết thúc');
+                        return;
+                    }
+                }
+
+                var data = {
+                    ID_LICH_LAM_VIEC: $('#hdEventID').val(),
+                    NOI_DUNG: $('#txtTitle').val().trim(),
+                    NGAY_BAT_DAU: $('#txtNgayBatDau').val().trim(),
+                    GIO_BAT_DAU: $('#txtGioBatDau').val().trim(),
+                    //GIO_BAT_DAU: moment($('#txtGioBatDau').val()).format('HH:mm:ss'),
+                    NGAY_KET_THUC: $('#txtNgayKetThuc').val().trim(),
+                    GIO_KET_THUC: $('#txtGioKetThuc').val().trim(),
+                    //End: $('#chkIsFullDay').is(':checked') ? null : $('#txtEnd').val().trim(),
+                    THANH_PHAN: $('#txtThanhPhan').val().trim()
+                }
+
+                SaveEvent(data);
+                // call function for submit data to the server
+            })
+
+            function SaveEvent(data) {
+                $.ajax({
+                    type: "POST",
+                    url: '/home/Edit',
+                    data: data,
+                    success: function (data) {
+                        if (data.status) {
+                            //Refresh the calender
+                            FetchEventAndRenderCalendar();
+                            $('#myModalSave').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+
+            $('#btnEdit').click(function () {
+                //Open modal dialog for edit event
+                //openEditForm();
+                var day = new Date();
+
+                if (selectedEvent.start < day && selectedEvent.end == null) {
+                    alert('Đã quá hạn cập nhật!');
+                }
+                else if (selectedEvent.end != null && selectedEvent.end < day) {
+                    alert('Đã quá hạn cập nhật!');
+                }
+            })
+
+            function openEditForm() {
+                if (selectedEvent != null) {
+                    $('#hdEventID').val(selectedEvent.eventID);
+                    $('#txtTitle').val(selectedEvent.title);
+                    $('#txtGioBatDau').val(selectedEvent.startTime.format('HH:mm:ss'));
+                    $('#txtNgayBatDau').val(selectedEvent.start.format('DD/MM/YYYY'));
+                    $('#txtGioKetThuc').val(selectedEvent.endTime.format('HH:mm:ss'));
+                    $('#txtNgayKetThuc').val(selectedEvent.end != null ? selectedEvent.end.format('DD/MM/YYYY') : selectedEvent.start.format('DD/MM/YYYY'));
+                    $('#txtThanhPhan').val(selectedEvent.thanhphan);
+                }
+                $('#myModal').modal('hide');
+                $('#myModalSave').modal();
+            }
+
+            $('#btnDelete').click(function () {
+                var day = new Date();
+
+                if (selectedEvent.start < day && selectedEvent.end == null) {
+                    alert('Đã quá hạn cập nhật!');
+                }
+                else if (selectedEvent.end != null && selectedEvent.end < day) {
+                    alert('Đã quá hạn cập nhật!');
+                }
+                else if (selectedEvent != null && confirm('Bạn muốn xóa lịch làm việc ' + selectedEvent.title + ' ?')) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/home/DeleteEvent',
+                        data: { 'eventID': selectedEvent.eventID },
+                        success: function (data) {
+                            if (data.status) {
+                                //Refresh the calender
+                                FetchEventAndRenderCalendar();
+                                $('#myModal').modal('hide');
+                            }
+                            alert('Xóa thành công!');
+                        },
+                        error: function () {
+                            alert('Failed');
+                        }
+                    })
+                }
+            })
+
+            $('#btnFind').click(function () {
+                var slDV = $('#selectList').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: '/home/GetEvents',
+                    data: { id: slDV },
+                    success: function (data) {
+                        $.each(data, function (i, v) {
+                            events.push({
+                                eventID: v.ID_LICH_LAM_VIEC,
+                                title: v.NOI_DUNG,
+                                startTime: moment(v.GIO_BAT_DAU),
+                                start: moment(v.NGAY_BAT_DAU),
+                                endTime: moment(v.GIO_KET_THUC),
+                                end: v.NGAY_KET_THUC != null ? moment(v.NGAY_KET_THUC) : null,
+                                thanhphan: v.THANH_PHAN == null ? "Không có" : v.THANH_PHAN,
+                                nhanvien: v.NHAN_VIEN
+                            });
+                        })
+
+                        GenerateCalender(events);
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            })
+        })
+    </script>
+}

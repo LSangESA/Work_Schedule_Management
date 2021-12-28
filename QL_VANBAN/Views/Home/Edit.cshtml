@@ -1,0 +1,253 @@
+﻿@model Model.DB2.LICHLAMVIEC
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<style>
+    .card {
+        padding: 25px;
+    }
+
+    .shadow-textarea textarea.form-control::placeholder {
+        font-weight: 300;
+    }
+
+    .shadow-textarea textarea.form-control {
+        padding-left: 0.8rem;
+    }
+
+    #listNhanVien, #slNhanVien, #listDonVi, #slDonVi {
+        height: 150px;
+    }
+
+    .btn-click {
+        width: 100%;
+        font-weight: bold;
+        height: 37px;
+        border: 1px solid #DDDDDD;
+    }
+
+    .input-group-text {
+        width: 130px;
+    }
+
+    #exampleFormControlTextarea6 {
+        height: 100px;
+    }
+</style>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $(function () {
+        $(".datepicker").datepicker({ dateFormat: 'dd/mm/yy', minDate: 0 });
+        
+    });
+</script>
+
+<section class="content">
+
+    <h2>Cập nhật</h2>
+    <div class="card">
+        @using (Html.BeginForm("Edit", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.EditorFor(model => model.ID_LICH_LAM_VIEC, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="input-group mb-3 col-md-10">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        Nội dung
+                    </span>
+                </div>
+                @Html.EditorFor(model => model.NOI_DUNG, new { htmlAttributes = new { @class = "form-control", @required = true } })
+                @Html.ValidationMessageFor(model => model.NOI_DUNG, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="input-group mb-3 col-md-10">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        Giờ bắt đầu
+                    </span>
+                </div>
+                @Html.EditorFor(model => model.GIO_BAT_DAU, new { htmlAttributes = new { @class = "form-control", Type = "time", @required = true } })
+                @Html.ValidationMessageFor(model => model.GIO_BAT_DAU, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="input-group mb-3 col-md-10">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        Ngày bắt đầu
+                    </span>
+                </div>
+                @Html.EditorFor(model => model.NGAY_BAT_DAU, new { htmlAttributes = new { @class = "form-control datepicker", @required = true } })
+
+                @Html.ValidationMessageFor(model => model.NGAY_BAT_DAU, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="input-group mb-3 col-md-10">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        Giờ kết thúc
+                    </span>
+                </div>
+                @Html.EditorFor(model => model.GIO_KET_THUC, new { htmlAttributes = new { @class = "form-control", Type = "time", @required = true } })
+                @Html.ValidationMessageFor(model => model.GIO_KET_THUC, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="input-group mb-3 col-md-10">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        Ngày kết thúc
+                    </span>
+                </div>
+                @Html.EditorFor(model => model.NGAY_KET_THUC, new { htmlAttributes = new { @class = "form-control datepicker" } })
+                @Html.ValidationMessageFor(model => model.NGAY_KET_THUC, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="input-group mb-3 col-md-10">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        Thành phần
+                    </span>
+                </div>
+                @Html.TextAreaFor(model => model.THANH_PHAN, new { @class = "form-control z-depth-1", @id = "exampleFormControlTextarea6", @row = 5, @placeholder = "Nhập thành phần tham dự bên ngoài..." })
+                @Html.ValidationMessageFor(model => model.THANH_PHAN, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.DropDownList("listNhanVien", ViewBag.ListNhanVien as SelectList, new { @class = "form-control", multiple = true })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="row"><input class="btn-click btn btn-light" type="button" id="right" value=">" /></div>
+                    <div class="row"><input class="btn-click btn btn-light" type="button" id="left" value="<" /></div>
+                    <div class="row"><input class="btn-click btn btn-light" type="button" id="rightall" value=">>" /></div>
+                    <div class="row"><input class="btn-click btn btn-light" type="button" id="leftall" value="<<" /></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @*@Html.DropDownList("slNhanVien", ViewBag.ListCheckNV as SelectList, new { @class = "form-control", multiple = true })*@
+                            
+                            <select id="slNhanVien" name="slNhanVien" class="form-control" multiple>
+                                @foreach (var item in ViewBag.ListCheckNV as SelectList)
+                                {
+                                    <option selected value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.DropDownList("listDonVi", ViewBag.ListDonVi as SelectList, new { @class = "form-control", multiple = true })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="row"><input class="btn-click btn btn-light" type="button" id="dvright" value=">" /></div>
+                    <div class="row"><input class="btn-click btn btn-light" type="button" id="dvleft" value="<" /></div>
+                    <div class="row"><input class="btn-click btn btn-light" type="button" id="dvrightall" value=">>" /></div>
+                    <div class="row"><input class="btn-click btn btn-light" type="button" id="dvleftall" value="<<" /></div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @*@Html.DropDownList("slDonVi", ViewBag.ListCheckDonVi as SelectList, new { @class = "form-control", multiple = true })*@
+                            <select id="slDonVi" name="slDonVi" class="form-control" multiple>
+                                @foreach (var item in ViewBag.ListCheckDonVi as SelectList)
+                                {
+                                    <option selected value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Cập nhật" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+        }
+
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+
+
+        $(function () {
+            function moveItems(origin, dest) {
+                $(origin).find(':selected').appendTo(dest);
+            }
+
+            function moveAllItems(origin, dest) {
+                $(origin).children().appendTo(dest);
+            }
+
+            $('#left').click(function () {
+                moveItems('#slNhanVien', '#listNhanVien');
+            });
+
+            $('#right').on('click', function () {
+                moveItems('#listNhanVien', '#slNhanVien');
+            });
+
+            $('#leftall').on('click', function () {
+                moveAllItems('#slNhanVien', '#listNhanVien');
+            });
+
+            $('#rightall').on('click', function () {
+                moveAllItems('#listNhanVien', '#slNhanVien');
+            });
+        });
+
+        $(function () {
+            function moveItems(origin, dest) {
+                $(origin).find(':selected').appendTo(dest);
+            }
+
+            function moveAllItems(origin, dest) {
+                $(origin).children().appendTo(dest);
+            }
+
+            $('#dvleft').click(function () {
+                moveItems('#slDonVi', '#listDonVi');
+            });
+
+            $('#dvright').on('click', function () {
+                moveItems('#listDonVi', '#slDonVi');
+            });
+
+            $('#dvleftall').on('click', function () {
+                moveAllItems('#slDonVi', '#listDonVi');
+            });
+
+            $('#dvrightall').on('click', function () {
+                moveAllItems('#listDonVi', '#slDonVi');
+            });
+        });
+    </script>
+}
+

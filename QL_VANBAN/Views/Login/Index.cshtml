@@ -1,0 +1,89 @@
+﻿@model QL_VANBAN.Models.LoginModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login V15</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="~/Assets/LoginTemplate/images/icons/favicon.ico" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/vendor/bootstrap/css/bootstrap.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/vendor/animate/animate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/vendor/css-hamburgers/hamburgers.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/vendor/animsition/css/animsition.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/vendor/select2/select2.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/vendor/daterangepicker/daterangepicker.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/css/util.css">
+    <link rel="stylesheet" type="text/css" href="~/Assets/LoginTemplate/css/main.css">
+    <!--===============================================================================================-->
+</head>
+<body>
+
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100">
+                <div class="login100-form-title" style="background-image: url(images/bg-01.jpg);">
+                    <span class="login100-form-title-1">
+                        Đăng nhập
+                    </span>
+                </div>
+
+                @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { @class= "login100-form validate-form" } ))
+                {
+                    @Html.AntiForgeryToken() // Gan token de chay
+                    <div class="wrap-input100 validate-input m-b-26" data-validate="Tên đăng nhập không được bỏ trống">
+                        <span class="label-input100">Username</span>
+                        @Html.TextBoxFor(model => model.UserName, new { @class = "input100", @name = "username", @placeholder = "Tên đăng nhập" })
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input m-b-18" data-validate="Mật khẩu không được bỏ trống">
+                        <span class="label-input100">Password</span>
+                        @Html.TextBoxFor(model => model.Password, new { @class = "input100", @name = "pass", @placeholder = "Mật khẩu", @type = "password" })
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="container-login100-form-btn">
+                        <button class="login100-form-btn" type="submit">
+                            Login
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!--===============================================================================================-->
+    <script src="~/Assets/LoginTemplate/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Assets/LoginTemplate/vendor/animsition/js/animsition.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Assets/LoginTemplate/vendor/bootstrap/js/popper.js"></script>
+    <script src="~/Assets/LoginTemplate/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Assets/LoginTemplate/vendor/select2/select2.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Assets/LoginTemplate/vendor/daterangepicker/moment.min.js"></script>
+    <script src="~/Assets/LoginTemplate/vendor/daterangepicker/daterangepicker.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Assets/LoginTemplate/vendor/countdowntime/countdowntime.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Assets/LoginTemplate/js/main.js"></script>
+
+</body>
+</html>

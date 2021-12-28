@@ -1,0 +1,7 @@
+Admin (văn thư): 
+TK: lqnhan
+MK: lqnhan123
+
+User (nhân viên):
+TK: lqsang
+MK: lqsang123
